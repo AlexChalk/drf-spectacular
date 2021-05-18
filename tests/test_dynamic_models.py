@@ -11,7 +11,7 @@ class User(models.Model):
 
 
 class Receiver(models.Model):
-    sender = models.ForeignKey(
+    receiver = models.ForeignKey(
         User,
         verbose_name="Receiver Profile",
         on_delete=models.SET_NULL,
