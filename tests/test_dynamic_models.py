@@ -78,8 +78,17 @@ def test_dynamic_models():
     generator = SchemaGenerator(patterns=router.urls)
     schema = generator.get_schema(request=None, public=True)
 
-    user_schema = schema['components']['schemas']['User']
-    receiver_user_schema = schema['components']['schemas']['Receiver']['properties']['receiver']['$ref']
+    # Assert user schema is returned for user response
+    user_response = schema['paths']['/y//']['get']['responses']['200']['content']['application/json']['schema']['items']['$ref']
+    assert user_response == "#/components/schemas/User"
 
+    # Assert same user schema is returned for receiver response
+    receiver_response = schema['paths']['/z//']['get']['responses']['200']['content']['application/json']['schema']['items']['$ref']
+    assert receiver_response == "#/components/schemas/Receiver"
+
+    receiver_user_schema = schema['components']['schemas']['Receiver']['properties']['receiver']['$ref']
     assert receiver_user_schema == "#/components/schemas/User"
+
+    # Assert all properties are included for both (undesired)
+    user_schema = schema['components']['schemas']['User']
     assert len(user_schema['properties']) == 5
